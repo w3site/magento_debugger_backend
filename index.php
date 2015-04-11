@@ -39,6 +39,10 @@ $currentHostName = $_SERVER['SERVER_NAME'];
 $dir = opendir('config');
 while($file = readdir($dir)){
     if (!is_file('config/' . $file)) continue;
+    $fileInfo = pathinfo($file);
+    if (!isset($fileInfo['extension']) || $fileInfo['extension']!='ini'){
+        continue;
+    }
     
     $config = new Zend_Config_Ini('config/' . $file, 'config');
     if ($config->name == $currentHostName){
