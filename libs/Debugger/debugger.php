@@ -35,12 +35,13 @@ abstract class MagentoDebugger{
             
             $config = new Zend_Config_Ini('config/' . $file, 'config');
             if ($config->name == $currentHostName){
-                $currentHost = $config;
+                $currentHost = $config->toArray();
+                $currentHost['identifier'] = $file;
                 break;
             }
         }
         
-        MagentoDebugger::setProjectDir($currentHost->dir);
+        MagentoDebugger::setProjectDir($currentHost['dir']);
         return $currentHost;
     }
     

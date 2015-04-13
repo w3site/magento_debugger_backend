@@ -110,7 +110,7 @@ if (isset($_GET['magento_debug'])){
     }
 }
 else{
-    chdir($currentHost->dir);
+    chdir(MagentoDebugger::getProjectDir());
     require_once('index.php');
 }
 ?>

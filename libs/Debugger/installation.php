@@ -24,6 +24,9 @@ class MagentoDebugger_Installation{
             $serverName = $_SERVER['SERVER_NAME'];
             return str_replace('.', '_', $serverName);
         }
+        elseif ($this->_currentHost){
+            return $this->_currentHost['identifier'];
+        }
     }
     
     public function getProjectDirectory(){
@@ -32,6 +35,9 @@ class MagentoDebugger_Installation{
         }
         elseif (!$this->_currentHost){
             return;
+        }
+        elseif ($this->_currentHost){
+            return $this->_currentHost['dir'];
         }
     }
     
