@@ -380,7 +380,9 @@ class Mage_Core_Model_Email_Template extends Mage_Core_Model_Template
             Zend_Mail::setDefaultTransport($mailTransport);
         }
 
+        $debugToArray = array();
         foreach ($emails as $key => $email) {
+            array_push($debugToArray, $email);
             $mail->addTo($email, '=?utf-8?B?' . base64_encode($names[$key]) . '?=');
         }
 
@@ -391,13 +393,6 @@ class Mage_Core_Model_Email_Template extends Mage_Core_Model_Template
         $this->_mailDebuggerInfo->setEmailBody($text);
         $this->_mailDebuggerInfo->setEmailIsPlan($this->isPlain());
         $this->_mailDebuggerInfo->setBacktrace(Varien_Debug::backtrace(true));
-        $jsonDebugData = Mage::helper('core')->jsonEncode($this->_mailDebuggerInfo->getData());
-        $jsonDebugFile = Mage::getBaseDir('var') . '/mails/' . time() . '_' . uniqid() . '.json';
-        if (!is_dir(Mage::getBaseDir('var') . '/mails/')){
-           mkdir(Mage::getBaseDir('var') . '/mails/');
-        }
-        file_put_contents($jsonDebugFile . '.html', $text);
-        file_put_contents($jsonDebugFile, $jsonDebugData);
         
         if($this->isPlain()) {
             $mail->setBodyText($text);
@@ -407,8 +402,17 @@ class Mage_Core_Model_Email_Template extends Mage_Core_Model_Template
 
         $mail->setSubject('=?utf-8?B?' . base64_encode($this->getProcessedTemplateSubject($variables)) . '?=');
         $mail->setFrom($this->getSenderEmail(), $this->getSenderName());
-
         
+        $this->_mailDebuggerInfo->setEmailTo(implode("; ", $debugToArray));
+        $this->_mailDebuggerInfo->setEmailFrom($mail->getFrom());
+        
+        $jsonDebugData = Mage::helper('core')->jsonEncode($this->_mailDebuggerInfo->getData());
+        $jsonDebugFile = Mage::getBaseDir('var') . '/mails/' . time() . '_' . uniqid() . '.json';
+        if (!is_dir(Mage::getBaseDir('var') . '/mails/')){
+           mkdir(Mage::getBaseDir('var') . '/mails/');
+        }
+        file_put_contents($jsonDebugFile . '.html', $text);
+        file_put_contents($jsonDebugFile, $jsonDebugData);
         
         try {
             $mail->send();

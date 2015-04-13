@@ -1,89 +1,52 @@
 <?php
-/**
- * © Tereta Alexander (www.w3site.org), 2014-2015yy
- * All rights reserved.
- *
- * @author Tereta Alexander (www.w3site.org)
- */
-
-define('MAGENTO_DEBUGGER_VERSION', '0.0.1');
-
-/**
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- */
+/*********************************************************************************
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.0.3'); /**
+ *********************************************************************************
+ *********************************************************************************
+ * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
+ * All rights reserved.                                                          *
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************
+ *********************************************************************************/
 
 require_once('libs/Zend/Exception.php');
 require_once('libs/Zend/Config/Exception.php');
 require_once('libs/Zend/Config.php');
 require_once('libs/Zend/Config/Ini.php');
 
-define('MAGENTO_DEBUGGER_DIR', dirname(__FILE__));
+require_once(dirname(__FILE__) . '/libs/Debugger/debugger.php');
+MagentoDebugger::setDebuggerDir(dirname(__FILE__));
 
-$currentHost = null;
-$currentHostName = $_SERVER['SERVER_NAME'];
-$dir = opendir('config');
-while($file = readdir($dir)){
-    if (!is_file('config/' . $file)) continue;
-    $fileInfo = pathinfo($file);
-    if (!isset($fileInfo['extension']) || $fileInfo['extension']!='ini'){
-        continue;
-    }
-    
-    $config = new Zend_Config_Ini('config/' . $file, 'config');
-    if ($config->name == $currentHostName){
-        $currentHost = $config;
-        break;
-    }
-}
-
-define('MAGENTO_DEBUGGER_PROJECT_DIR', $currentHost->dir);
+$currentHost = MagentoDebugger::getProjectInfo();
 
 // Installation
 if (!$currentHost || (isset($_GET['magento_debug']) && $_GET['magento_debug'] == 'configure')){
-    require_once(MAGENTO_DEBUGGER_DIR . '/libs/Debugger/installation.php');
+    require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/installation.php');
     return;
 }
+
+MagentoDebugger::prepareLibraries();
 
 // XDebug
 if (isset($_GET['XDEBUG_SESSION_START']) || isset($_GET['XDEBUG_SESSION_STOP_NO_EXEC'])){
-    require_once(MAGENTO_DEBUGGER_DIR . '/libs/Debugger/xdebug.php');
+    require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/xdebug.php');
     return;
 }
 
-// Admin prepare
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/app/code/core/Mage/Core/Helper/Abstract.php');
-
-// Block prepare
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/lib/Varien/Object.php');
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/app/code/core/Mage/Core/Block/Abstract.php');
-
-// Email prepare
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/app/code/core/Mage/Core/Model/Abstract.php');
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/app/code/core/Mage/Core/Model/Template.php');
-
-// Database prepare
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/lib/Varien/Db/Adapter/Interface.php');
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/lib/Varien/Db/Ddl/Table.php');
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/lib/Zend/Db/Adapter/Abstract.php');
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/lib/Zend/Db/Adapter/Pdo/Abstract.php');
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/lib/Zend/Db/Adapter/Pdo/Mysql.php');
-require_once(MAGENTO_DEBUGGER_PROJECT_DIR . '/lib/Zend/Db.php');
-
+// Debugger info
 if (isset($_GET['magento_debug_info']) && $_GET['magento_debug_info'] == 'yes'){
     $debuggedInfo = new Varien_Object();
     $debuggedInfo->setVersion(MAGENTO_DEBUGGER_VERSION);
@@ -91,7 +54,8 @@ if (isset($_GET['magento_debug_info']) && $_GET['magento_debug_info'] == 'yes'){
     return;
 }
 
-if (true){ // Email debug
+// Email debug
+if (isset($_COOKIE['magento_debug_mails']) && $_COOKIE['magento_debug_mails'] == 'yes'){
     require_once('libs/Mage/Core/Model/Email/Template.php');
 }
 
@@ -131,14 +95,18 @@ if (isset($_COOKIE['magento_debug_blocks']) && $_COOKIE['magento_debug_blocks'] 
     require_once('libs/Mage/Core/Block/Template.php');
 }
 
-// http://kamikv2.w3site.org/?magento_debug_action=model&magento_debug_model_method=kamik_newsletter/observer::confirmationReminder
-// kamik_newsletter/observer::confirmationReminder
 if (isset($_GET['magento_debug'])){
+    MagentoDebugger::iniMage();
+    
     if ($_GET['magento_debug'] == 'model' && isset($_GET['magento_debug_model_method'])){
         $modelMethodName = $_GET['magento_debug_model_method'];
         
         header('Content-Type: text/plain');
-        require_once('libs/Debugger/model.php');
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/model.php');
+    }
+    
+    if ($_GET['magento_debug'] == 'maillist' && isset($_GET['magento_debug_action'])){
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/mails.php');
     }
 }
 else{
