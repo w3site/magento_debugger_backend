@@ -50,4 +50,5 @@ abstract class MagentoDebugger_Mails{
     }
 }
 
+MagentoDebugger::iniMage();
 MagentoDebugger_Mails::init();

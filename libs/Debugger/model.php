@@ -7,6 +7,8 @@
  */
 
 try {
+    MagentoDebugger::iniMage();
+    
     while(true){
         if (!$modelMethodName){
             MagentoDebugger::log("Model and method does not present.");

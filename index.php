@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.0.4'); /**
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.0.5'); /**
  *********************************************************************************
  *********************************************************************************
  * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
@@ -96,8 +96,6 @@ if (isset($_COOKIE['magento_debug_blocks']) && $_COOKIE['magento_debug_blocks'] 
 }
 
 if (isset($_GET['magento_debug'])){
-    MagentoDebugger::iniMage();
-    
     if ($_GET['magento_debug'] == 'model' && isset($_GET['magento_debug_model_method'])){
         $modelMethodName = $_GET['magento_debug_model_method'];
         
@@ -108,9 +106,14 @@ if (isset($_GET['magento_debug'])){
     if ($_GET['magento_debug'] == 'maillist' && isset($_GET['magento_debug_action'])){
         require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/mails.php');
     }
+    
+    if ($_GET['magento_debug'] == 'mysql' && isset($_GET['magento_debug_action'])){
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/mysql.php');
+    }
 }
 else{
     chdir(MagentoDebugger::getProjectDir());
     require_once('index.php');
+    MagentoDebugger::saveConfiguration();
 }
 ?>

@@ -22,7 +22,13 @@ abstract class MagentoDebugger{
         return self::$_configurations['project_dir'];
     }
     
+    protected static $_projectInfo = null;
+    
     public static function getProjectInfo(){
+        if (self::$_projectInfo){
+            return self::$_projectInfo;
+        }
+        
         $currentHost = null;
         $currentHostName = $_SERVER['SERVER_NAME'];
         $dir = opendir('config');
@@ -36,12 +42,17 @@ abstract class MagentoDebugger{
             $config = new Zend_Config_Ini('config/' . $file, 'config');
             if ($config->name == $currentHostName){
                 $currentHost = $config->toArray();
-                $currentHost['identifier'] = $file;
+                $currentHost['identifier'] = $fileInfo['filename'];
                 break;
             }
         }
         
+        // Append data
+        $extended = file_get_contents(MagentoDebugger::getDebuggerDir() . '/var/' . $currentHost['identifier'] . '.project.json');
+        $currentHost['extended'] = (array) json_decode($extended);
+        
         MagentoDebugger::setProjectDir($currentHost['dir']);
+        self::$_projectInfo = $currentHost;
         return $currentHost;
     }
     
@@ -76,5 +87,23 @@ abstract class MagentoDebugger{
         Mage::setIsDeveloperMode(true);
         
         umask(0);
+    }
+    
+    protected static $_configurationSaved = false;
+    
+    public static function saveConfiguration(){
+        if (self::$_configurationSaved){
+            return;
+        }
+        
+        self::$_configurationSaved = true;
+        
+        $dataObject = new Varien_Object();
+        $dataObject->setVarDir(Mage::getBaseDir('var'));
+        
+        $json = Mage::helper('core')->jsonEncode($dataObject);
+        $projectInfo = self::getProjectInfo();
+        $file = self::getDebuggerDir() . '/var/' . $projectInfo['identifier'] . '.project.json';
+        file_put_contents($file, $json);
     }
 }
