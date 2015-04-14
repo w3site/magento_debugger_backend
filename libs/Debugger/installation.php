@@ -82,19 +82,23 @@ class MagentoDebugger_Installation{
         
         $configDir = MagentoDebugger::getDebuggerDir() . '/config';
         $varDir = MagentoDebugger::getDebuggerDir() . '/var';
-        if (!@file_put_contents($varDir . '/check.temp', $dataToSave)){
+        
+        $allowed = true;
+        if (!is_writable($varDir)){
             array_push($this->_errors, 'Please make "var" dir at the Magento Debugger and all files on it writable ("' . $varDir . '").');
+            $allowed = false;
         }
- 
-        if (!@file_put_contents($configDir . '/check.temp', $dataToSave)){
+        
+        if (!is_writable($configDir)){
             array_push($this->_errors, 'Please make "config" dir at the Magento Debugger and all files on it writable ("' . $configDir . '").');
+            $allowed = false;
         }
         
-        @unlink($varDir . '/check.temp');
-        @unlink($configDir . '/check.temp');
-        
-        if (!$this->_errors && @file_put_contents($configDir . '/' . $identifier . '.ini', $dataToSave)){
+        if ($allowed && @file_put_contents($configDir . '/' . $identifier . '.ini', $dataToSave)){
             array_push($this->_messages, 'Host sucefully configured.');
+        }
+        elseif ($allowed){
+            array_push($this->_errors, 'Please check the dir "config" on the Magento Debugger. The file ' . $configDir . '/' . $identifier . '.ini can not be written.');
         }
     }
     
