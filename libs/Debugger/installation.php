@@ -80,12 +80,21 @@ class MagentoDebugger_Installation{
         $dataToSave .= "name = '" . $_SERVER['SERVER_NAME'] . "'\n";
         $dataToSave .= "dir = '" . $projectDirectory . "'\n";
         
-        $configDir = MAGENTO_DEBUGGER_DIR . '/config';
-        if (@file_put_contents($configDir . '/' . $identifier . '.ini', $dataToSave)){
-            array_push($this->_messages, 'Host sucefully configured.');
+        $configDir = MagentoDebugger::getDebuggerDir() . '/config';
+        $varDir = MagentoDebugger::getDebuggerDir() . '/var';
+        if (!@file_put_contents($varDir . '/check.temp', $dataToSave)){
+            array_push($this->_errors, 'Please make "var" dir at the Magento Debugger and all files on it writable ("' . $varDir . '").');
         }
-        else{
-            array_push($this->_errors, 'Please make config dir at the Magento Debugger and all files on it writable ("' . $configDir . '").');
+ 
+        if (!@file_put_contents($configDir . '/check.temp', $dataToSave)){
+            array_push($this->_errors, 'Please make "config" dir at the Magento Debugger and all files on it writable ("' . $configDir . '").');
+        }
+        
+        @unlink($varDir . '/check.temp');
+        @unlink($configDir . '/check.temp');
+        
+        if (!$this->_errors && @file_put_contents($configDir . '/' . $identifier . '.ini', $dataToSave)){
+            array_push($this->_messages, 'Host sucefully configured.');
         }
     }
     

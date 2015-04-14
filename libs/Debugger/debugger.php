@@ -47,9 +47,15 @@ abstract class MagentoDebugger{
             }
         }
         
+        if (!$currentHost){
+            return;
+        }
+        
         // Append data
-        $extended = file_get_contents(MagentoDebugger::getDebuggerDir() . '/var/' . $currentHost['identifier'] . '.project.json');
-        $currentHost['extended'] = (array) json_decode($extended);
+        if (is_file(MagentoDebugger::getDebuggerDir() . '/var/' . $currentHost['identifier'] . '.project.json')){
+            $extended = file_get_contents(MagentoDebugger::getDebuggerDir() . '/var/' . $currentHost['identifier'] . '.project.json');
+            $currentHost['extended'] = (array) json_decode($extended);
+        }
         
         MagentoDebugger::setProjectDir($currentHost['dir']);
         self::$_projectInfo = $currentHost;
