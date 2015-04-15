@@ -25,6 +25,11 @@ abstract class MagentoDebugger_Mysql{
     public static function clearMessages(){
         $varDir = MagentoDebugger::getProjectInfo()['extended']['var_dir'];
         $mysqlFile = $varDir . '/debug/pdo_mysql.log';
+        
+        if (!is_file($mysqlFile)){
+            return;
+        }
+        
         file_put_contents($mysqlFile, '');
         echo "success";
     }
@@ -32,6 +37,11 @@ abstract class MagentoDebugger_Mysql{
     public static function getMessages(){
         $varDir = MagentoDebugger::getProjectInfo()['extended']['var_dir'];
         $mysqlFile = $varDir . '/debug/pdo_mysql.log';
+        
+        if (!is_file($mysqlFile)){
+            return;
+        }
+        
         echo file_get_contents($mysqlFile);
     }
 }

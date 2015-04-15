@@ -38,6 +38,11 @@ if (!$currentHost || (isset($_GET['magento_debug']) && $_GET['magento_debug'] ==
     return;
 }
 
+if (!is_dir(MagentoDebugger::getProjectDir())){
+    header('Location: /?magento_debug=configure');
+    return;
+}
+
 MagentoDebugger::prepareLibraries();
 
 // XDebug
