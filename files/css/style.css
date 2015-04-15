@@ -1,0 +1,29 @@
+/***** body *****/
+body{
+    padding: 10px;
+}
+
+/***** header *****/
+header{
+    background-color: #e62513;
+    height: 50px;
+    margin-bottom: 25px;
+}
+
+header .logo{
+    width:70px;
+    float:left;
+}
+
+header .heading-link{
+    color: #fff;
+    padding: 0px 0px 0px 20px;
+    font-size: 14px;
+}
+
+header #heading{
+    font-size: 22px;
+    padding: 3px 0px 0px 90px;
+    color: #fff;
+    margin: 0px;
+}

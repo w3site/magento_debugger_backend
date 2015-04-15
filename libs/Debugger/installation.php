@@ -123,42 +123,51 @@ $installation = new MagentoDebugger_Installation($currentHost);
 $installation->savePost();
 ?>
 <html>
-   <body>
-       <h1>Configuration for the host "<?php echo $_SERVER['SERVER_NAME'] ?>"</h1>
-       <?php if ($installation->getMessages()) : ?>
-           <?php foreach($installation->getMessages() as $message) : ?>
-               <p class="message"><?php echo $message ?></p>
-           <?php endforeach ?>
-       <?php endif ?>
-       <?php if ($installation->getErrors()) : ?>
-           <?php foreach($installation->getErrors() as $error) : ?>
-               <p class="error"><?php echo $error ?></p>
-           <?php endforeach ?>
-       <?php endif ?>
-       
-       <form method="post" action="/?magento_debug=configure">
-           <fieldset>
-               <legend>Project</legend>
-               <table>
-                   <tr>
-                       <th>
-                           Identifier
-                       </th>
-                       <td>
-                           <input type="text" name="project_identifier" value="<?php echo addslashes($installation->getIdentifier()) ?>" />
-                       </td>
-                   </tr>
-                   <tr>
-                       <th>
-                           Directory
-                       </th>
-                       <td>
-                           <input type="text" name="project_directory" value="<?php echo addslashes($installation->getProjectDirectory()) ?>" />
-                       </td>
-                   </tr>
-               </table>
-               <input type="submit" value="Save" /> or <a href="/">proceed to the project</a>
-           </fieldset>
-       </form>
-   </body>
+    <head>
+        <link rel="stylesheet" href="/?magento_debug=file&magento_debug_file=css/style.css" />
+    </head>
+    <body>
+        <header>
+            <img src="/?magento_debug=file&magento_debug_file=images/icon.png" class="logo" />
+            <h1 id="heading">Magento Debugger</h1>
+            <a class="heading-link" href="http://w3site.org">W3Site.org</a>
+        </header>
+        
+        <h1>Configuration for the host "<?php echo $_SERVER['SERVER_NAME'] ?>"</h1>
+        <?php if ($installation->getMessages()) : ?>
+            <?php foreach($installation->getMessages() as $message) : ?>
+                <p class="message"><?php echo $message ?></p>
+            <?php endforeach ?>
+        <?php endif ?>
+        <?php if ($installation->getErrors()) : ?>
+            <?php foreach($installation->getErrors() as $error) : ?>
+                <p class="error"><?php echo $error ?></p>
+            <?php endforeach ?>
+        <?php endif ?>
+        
+        <form method="post" action="/?magento_debug=configure">
+            <fieldset>
+                <legend>Project</legend>
+                <table>
+                    <tr>
+                        <th>
+                            Identifier
+                        </th>
+                        <td>
+                            <input type="text" name="project_identifier" value="<?php echo addslashes($installation->getIdentifier()) ?>" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Directory
+                        </th>
+                        <td>
+                            <input type="text" name="project_directory" value="<?php echo addslashes($installation->getProjectDirectory()) ?>" />
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" value="Save" /> or <a href="/">proceed to the project</a>
+            </fieldset>
+        </form>
+    </body>
 </html>

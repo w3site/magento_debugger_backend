@@ -101,6 +101,19 @@ if (isset($_COOKIE['magento_debug_blocks']) && $_COOKIE['magento_debug_blocks'] 
 }
 
 if (isset($_GET['magento_debug'])){
+    if ($_GET['magento_debug'] == 'file' && isset($_GET['magento_debug_file'])){
+        $dir = MagentoDebugger::getDebuggerDir() . '/files/';
+        $file = realpath($dir . $_GET['magento_debug_file']);
+        
+        if ($file && substr($file, 0, strlen($dir)) == $dir){
+            echo file_get_contents($file);
+        }
+        else{
+            header("HTTP/1.0 404 Not Found");
+            echo "Error 404.";
+        }
+    }
+    
     if ($_GET['magento_debug'] == 'model' && isset($_GET['magento_debug_model_method'])){
         $modelMethodName = $_GET['magento_debug_model_method'];
         
