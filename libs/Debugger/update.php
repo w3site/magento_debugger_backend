@@ -1,7 +1,7 @@
 <?php 
 abstract class MagentoDebugger_Update{
     public static function run($version){
-        return;
+        //return;
         $updateDir = MagentoDebugger::getDebuggerVarDir() . '/update';
         if (is_dir($updateDir)){
             MagentoDebugger::removeDirectory($updateDir);
@@ -26,8 +26,8 @@ abstract class MagentoDebugger_Update{
                 continue;
             }
             
-            MagentoDebugger::removeDirectory(MagentoDebugger::getDebuggerDir() . '/' . $item);
-            MagentoDebugger::copy($updateVersionDir . '/' . $item, MagentoDebugger::getDebuggerDir(), 0777);
+            //MagentoDebugger::removeDirectory(MagentoDebugger::getDebuggerDir() . '/' . $item);
+            MagentoDebugger::copy($updateVersionDir . '/' . $item, MagentoDebugger::getDebuggerDir() . '/' . $item, 0777);
         }
     }
 }

@@ -118,6 +118,11 @@ abstract class MagentoDebugger{
     }
     
     function removeDirectory($path) {
+        if (!is_dir($path)){
+            unlink($path);
+            return;
+        }
+        
         $dirResource = opendir($path);
         
         while ($file = readdir($dirResource)) {
@@ -144,7 +149,6 @@ abstract class MagentoDebugger{
         if(is_dir($source)) {
             $dir_handle=opendir($source);
             $sourcefolder = basename($source);
-            var_dump($dest."/".$sourcefolder);
             mkdir($dest."/".$sourcefolder);
             if ($mode){
                 chmod($dest."/".$sourcefolder, $mode);
