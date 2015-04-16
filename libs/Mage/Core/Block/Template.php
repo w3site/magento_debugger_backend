@@ -246,6 +246,7 @@ HTML;
                 $uniqId = uniqid();
                 echo "<!-- + Block " . $uniqId . "\n";
                 echo "    Class: " . get_class($this) . ";\n";
+                echo "    Name in layout: " . $this->getNameInLayout() . ";\n";
                 echo "    File: " .  $includeFilePath . "\n-->";
                 include $includeFilePath;
                 echo "<!-- - Block " . $uniqId . " -->";

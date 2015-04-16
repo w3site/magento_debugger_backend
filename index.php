@@ -59,6 +59,11 @@ if (isset($_GET['magento_debug_info']) && $_GET['magento_debug_info'] == 'yes'){
     return;
 }
 
+// Controller debug
+if (isset($_COOKIE['magento_debug_controller']) && $_COOKIE['magento_debug_controller'] == 'yes'){
+    require_once('libs/Mage/Core/Controller/Varien/Action.php');
+}
+
 // Email debug
 if (isset($_COOKIE['magento_debug_mails']) && $_COOKIE['magento_debug_mails'] == 'yes'){
     require_once('libs/Mage/Core/Model/Email/Template.php');
