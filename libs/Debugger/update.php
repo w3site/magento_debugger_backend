@@ -1,7 +1,7 @@
 <?php 
 abstract class MagentoDebugger_Update{
     public static function run($version){
-        //return;
+        return;
         $updateDir = MagentoDebugger::getDebuggerVarDir() . '/update';
         if (is_dir($updateDir)){
             MagentoDebugger::removeDirectory($updateDir);
