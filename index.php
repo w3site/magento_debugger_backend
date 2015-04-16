@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.0.6'); /**
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.0.5'); /**
  *********************************************************************************
  *********************************************************************************
  * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
@@ -52,7 +52,14 @@ if (isset($_GET['XDEBUG_SESSION_START']) || isset($_GET['XDEBUG_SESSION_STOP_NO_
 }
 
 // Debugger info
-if (isset($_GET['magento_debug_info']) && $_GET['magento_debug_info'] == 'yes'){
+if (isset($_GET['magento_debug_info']) && isset($_GET['current_version'])){
+    $currentVersion = MAGENTO_DEBUGGER_VERSION;
+    
+    if ($_GET['current_version'] != MAGENTO_DEBUGGER_VERSION){
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
+        $updateData = MagentoDebugger_Update::run($_GET['current_version']);
+    }
+    
     $debuggedInfo = new Varien_Object();
     $debuggedInfo->setVersion(MAGENTO_DEBUGGER_VERSION);
     echo json_encode($debuggedInfo->getData());

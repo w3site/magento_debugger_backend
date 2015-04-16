@@ -14,6 +14,10 @@ abstract class MagentoDebugger{
         return self::$_configurations['debugger_dir'];
     }
     
+    public static function getDebuggerVarDir(){
+        return static::getDebuggerDir() . '/var';
+    }
+    
     public static function setProjectDir($dir){
         self::$_configurations['project_dir'] = $dir;
     }
@@ -111,5 +115,58 @@ abstract class MagentoDebugger{
         $projectInfo = self::getProjectInfo();
         $file = self::getDebuggerDir() . '/var/' . $projectInfo['identifier'] . '.project.json';
         file_put_contents($file, $json);
+    }
+    
+    function removeDirectory($path) {
+        $dirResource = opendir($path);
+        
+        while ($file = readdir($dirResource)) {
+            if ($file == '..' || $file == '.'){
+                continue;
+            }
+            
+            $file = $path . '/' . $file;
+            
+            if (is_dir($file)){
+                self::removeDirectory($file);
+            }
+            else{
+                unlink($file);
+            }
+        }
+        
+        rmdir($path);
+        return;
+    }
+    
+    static public function copy($source, $dest, $mode = false)
+    {
+        if(is_dir($source)) {
+            $dir_handle=opendir($source);
+            $sourcefolder = basename($source);
+            var_dump($dest."/".$sourcefolder);
+            mkdir($dest."/".$sourcefolder);
+            if ($mode){
+                chmod($dest."/".$sourcefolder, $mode);
+            }
+            while($file=readdir($dir_handle)){
+                if($file!="." && $file!=".."){
+                    if(is_dir($source."/".$file)){
+                        self::copy($source."/".$file, $dest."/".$sourcefolder);
+                    } else {
+                        copy($source."/".$file, $dest."/".$file);
+                        if ($mode){
+                            chmod($dest."/".$file, $mode);
+                        }
+                    }
+                }
+            }
+            closedir($dir_handle);
+        } else {
+            copy($source, $dest);
+            if ($mode){
+                chmod($dest, $mode);
+            }
+        }
     }
 }
