@@ -33,7 +33,17 @@ MagentoDebugger::setDebuggerDir(dirname(__FILE__));
 // Updater
 if (defined('MAGENTO_DEBUGGER_UPDATE')){
     require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
-    $updateData = MagentoDebugger_Update::run('0.0.6');
+    $arguments = $argv;
+    array_shift($arguments);
+    $version = null;
+    foreach($arguments as $item){
+        $itemArray = explode('=', $item);
+        if (isset($itemArray[0]) && $itemArray[0]=='--version' && isset($itemArray[1])){
+            $version = $itemArray[1];
+        }
+    }
+    
+    $updateData = MagentoDebugger_Update::run($version);
     return;
 }
 
@@ -63,6 +73,7 @@ if (isset($_GET['magento_debug_info']) && isset($_GET['current_version'])){
     $currentVersion = MAGENTO_DEBUGGER_VERSION;
     
     if ($_GET['current_version'] != MAGENTO_DEBUGGER_VERSION){
+        file_put_contents(MagentoDebugger::getDebuggerVarDir() . '/required.version', trim($_GET['current_version']));
     }
     
     $debuggedInfo = new Varien_Object();
