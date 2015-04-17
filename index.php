@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.0.0'); /**
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.0.6'); /**
  *********************************************************************************
  *********************************************************************************
  * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
@@ -30,6 +30,13 @@ require_once('libs/Zend/Config/Ini.php');
 require_once(dirname(__FILE__) . '/libs/Debugger/debugger.php');
 MagentoDebugger::setDebuggerDir(dirname(__FILE__));
 
+// Updater
+if (defined('MAGENTO_DEBUGGER_UPDATE')){
+    require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
+    $updateData = MagentoDebugger_Update::run('0.0.6');
+    return;
+}
+
 $currentHost = MagentoDebugger::getProjectInfo();
 
 // Installation
@@ -56,8 +63,6 @@ if (isset($_GET['magento_debug_info']) && isset($_GET['current_version'])){
     $currentVersion = MAGENTO_DEBUGGER_VERSION;
     
     if ($_GET['current_version'] != MAGENTO_DEBUGGER_VERSION){
-        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
-        $updateData = MagentoDebugger_Update::run($_GET['current_version']);
     }
     
     $debuggedInfo = new Varien_Object();
