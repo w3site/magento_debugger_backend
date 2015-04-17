@@ -33,7 +33,8 @@ abstract class MagentoDebugger_Update{
         }
         
         $updatePath = MagentoDebugger::getDebuggerDir();
-        $updatePath = '/home/tereta/Work/Server/MagentoDebugger_2';
+        //$updatePath = '/home/tereta/Work/Server/MagentoDebugger_2';
+        
         if (!self::verifyPermissions($updatePath)){
             echo "Please use root account becouse for some files, the current user haven't permissions to write.\n";
             echo "Updating failed.\n";
