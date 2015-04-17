@@ -37,7 +37,7 @@ abstract class MagentoDebugger_Update{
         // Update
         echo "Updating...\n";
         $updatePath = MagentoDebugger::getDebuggerDir();
-        $updatePath = '/home/tereta/Work/Server/MagentoDebugger_2';
+        //$updatePath = '/home/tereta/Work/Server/MagentoDebugger_2';
         
         self::updateFiles($updateVersionDir, $updatePath, true);
         echo "Update has been finished sucefully.\n";
