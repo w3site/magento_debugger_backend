@@ -153,13 +153,25 @@ if (isset($_GET['magento_debug'])){
         require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/mails.php');
     }
     
+    if ($_GET['magento_debug'] == 'profiler' && isset($_GET['magento_debug_action'])){
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/profiler.php');
+    }
+    
     if ($_GET['magento_debug'] == 'mysql' && isset($_GET['magento_debug_action'])){
         require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/mysql.php');
     }
+    
+    return;
 }
-else{
-    chdir(MagentoDebugger::getProjectDir());
-    require_once('index.php');
-    MagentoDebugger::saveConfiguration();
+
+// Profiler
+if (isset($_COOKIE['magento_debug_profiler']) && $_COOKIE['magento_debug_profiler'] == 'yes'){
+    MagentoDebugger::enableProfiler();
 }
+
+chdir(MagentoDebugger::getProjectDir());
+require_once('index.php');
+
+MagentoDebugger::saveConfiguration();
+//MagentoDebugger::saveProfiler();
 ?>

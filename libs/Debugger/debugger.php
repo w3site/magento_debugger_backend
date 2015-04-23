@@ -28,6 +28,46 @@ abstract class MagentoDebugger{
     
     protected static $_projectInfo = null;
     
+    protected static $_profilerEnabled = false;
+    
+    public static function enableProfiler($status = true){
+        self::$_profilerEnabled = $status;
+        if (!$status){
+            return;
+        }
+        
+        require_once(self::getDebuggerDir() . '/libs/Varien/Profiler.php');
+        Varien_Profiler::enable();
+    }
+    
+    /**
+     * !!!! Depricated !!!!
+     */
+    public static function saveProfiler(){
+        return;
+        
+        if (!self::$_profilerEnabled){
+            return;
+        }
+        
+        $timers = Varien_Profiler::getTimers();
+        
+        mkdir(MagentoDebugger::getProjectDir() . '/var/profiler');
+        $uniqId = time() . '_' . uniqid();
+        
+        $text = "<html><body><table>";
+        $text .= "<tr><th>Key</th><th>Time</th><th>Count</th>";
+        foreach($timers as $key=>$timer){
+            $text .= "<tr>";
+            $text .= "<td>" . $key . "</td>";
+            $text .= "<td>" . $timer['sum'] . "</td>";
+            $text .= "<td>" . $timer['count'] . "</td>";
+            $text .= "</tr>";
+        }
+        $text .= "</body></html></table>";
+        file_put_contents(MagentoDebugger::getProjectDir() . '/var/profiler/' . $uniqId . '.html', $text);
+    }
+    
     public static function getProjectInfo(){
         if (self::$_projectInfo){
             return self::$_projectInfo;
