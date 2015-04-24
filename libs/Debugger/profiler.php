@@ -19,11 +19,12 @@ abstract class MagentoDebugger_Mails{
     }
     
     public static function getData(){
+         $serverKey = MagentoDebugger::getKeyFromString($_SERVER['SERVER_NAME']);
          $profileKey = isset($_GET['magento_debug_profiler_key']) ? $_GET['magento_debug_profiler_key'] : '';
          $profilerDir = MagentoDebugger::getDebuggerVarDir() . '/profiler';
          $data = array();
          
-         $profilerFile = $profilerDir . '/' . $profileKey . '.jsar';
+         $profilerFile = $profilerDir . '/' . $serverKey . '.' . $profileKey . '.jsar';
          
          if (!is_file($profilerFile)){
              return;
@@ -41,6 +42,8 @@ abstract class MagentoDebugger_Mails{
     }
     
     public static function getList(){
+        $serverKey = MagentoDebugger::getKeyFromString($_SERVER['SERVER_NAME']);
+        
         $profilerDir = MagentoDebugger::getDebuggerVarDir() . '/profiler';
         $dir = opendir($profilerDir);
         $files = array();
@@ -50,14 +53,20 @@ abstract class MagentoDebugger_Mails{
                 continue;
             }
             
+            if (substr($item, 0, strlen($serverKey) + 1) != $serverKey . '.'){
+                continue;
+            }
+            
             $headerJson = file_get_contents($profilerDir . '/' . $item);
             $header = json_decode(trim($headerJson));
-            $files[$header->time] = $header;
+            $time = $header->time;
+            $header->time = @date('Y.m.d H:i:s', $time);
+            $files[$time] = $header;
         }
         sort($files);
         echo json_encode($files);
     }
 }
 
-MagentoDebugger::iniMage();
+//MagentoDebugger::iniMage();
 MagentoDebugger_Mails::init();

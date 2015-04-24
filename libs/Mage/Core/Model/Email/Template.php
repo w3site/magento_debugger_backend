@@ -407,11 +407,14 @@ class Mage_Core_Model_Email_Template extends Mage_Core_Model_Template
         $this->_mailDebuggerInfo->setEmailFrom($mail->getFrom());
         
         $jsonDebugData = Mage::helper('core')->jsonEncode($this->_mailDebuggerInfo->getData());
-        $jsonDebugFile = Mage::getBaseDir('var') . '/mails/' . time() . '_' . uniqid() . '.json';
-        if (!is_dir(Mage::getBaseDir('var') . '/mails/')){
-           mkdir(Mage::getBaseDir('var') . '/mails/');
+        
+        $serverKey = MagentoDebugger::getKeyFromString(isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'console');
+        
+        $jsonDebugFile = MagentoDebugger::getDebuggerVarDir() . '/mails/' . $serverKey . '.' . time() . '_' . uniqid() . '.json';
+        if (!is_dir(MagentoDebugger::getDebuggerVarDir() . '/mails/')){
+           mkdir(MagentoDebugger::getDebuggerVarDir() . '/mails/');
         }
-        file_put_contents($jsonDebugFile . '.html', $text);
+        //file_put_contents($jsonDebugFile . '.html', $text);
         file_put_contents($jsonDebugFile, $jsonDebugData);
         
         try {

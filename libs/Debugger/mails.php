@@ -29,7 +29,9 @@ abstract class MagentoDebugger_Mails{
     }
     
     public static function getList(){
-        $mailDir = Mage::getBaseDir('var') . '/mails';
+        $serverKey = MagentoDebugger::getKeyFromString($_SERVER['SERVER_NAME']);
+        
+        $mailDir = MagentoDebugger::getDebuggerVarDir() . '/mails';
         $dir = opendir($mailDir);
         $files = array();
         while($item = readdir($dir)){
@@ -42,7 +44,7 @@ abstract class MagentoDebugger_Mails{
             $itemConfiguration = (array) json_decode($itemConfigurationString);
             $itemConfiguration['identifier'] = $pathinfo['filename'];
             $itemConfiguration['time'] = filemtime($mailDir . '/' . $item);
-            $itemConfiguration['datetime'] = date('Y-m-d H:i:s', $itemConfiguration['time']);
+            $itemConfiguration['datetime'] = @date('Y-m-d H:i:s', $itemConfiguration['time']);
             $files[$itemConfiguration['time'] . '_' . uniqid()] = $itemConfiguration;
         }
         sort($files);
@@ -50,5 +52,4 @@ abstract class MagentoDebugger_Mails{
     }
 }
 
-MagentoDebugger::iniMage();
 MagentoDebugger_Mails::init();

@@ -41,11 +41,12 @@ class Varien_Profiler
     
     public static function enable()
     {
+        $serverKey = MagentoDebugger::getKeyFromString(isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'console');
         self::$_enabled = true;
         self::$_memory_get_usage = function_exists('memory_get_usage');
         $time = time();
         self::$_uniqId = $time . '_' . uniqid();
-        self::$_jsonLog = MagentoDebugger::getDebuggerVarDir() . '/profiler/' . self::$_uniqId;
+        self::$_jsonLog = MagentoDebugger::getDebuggerVarDir() . '/profiler/' . $serverKey . '.' . self::$_uniqId;
         
         $url = (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'Not specified');
         

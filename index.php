@@ -173,5 +173,4 @@ chdir(MagentoDebugger::getProjectDir());
 require_once('index.php');
 
 MagentoDebugger::saveConfiguration();
-//MagentoDebugger::saveProfiler();
 ?>
