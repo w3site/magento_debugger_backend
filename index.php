@@ -63,6 +63,7 @@ if (isset($_GET['magento_debug_info']) && isset($_GET['current_version'])){
         catch(Exception $e){
             unlink(MagentoDebugger::getDebuggerVarDir() . '/required.version');
             file_put_contents(MagentoDebugger::getDebuggerVarDir() . '/required.version', trim($_GET['current_version']));
+            rmdir(MagentoDebugger::getDebuggerVarDir() . '/required.dir');
             mkdir(MagentoDebugger::getDebuggerVarDir() . '/required.dir');
             
             $debuggedInfo->setUpdated(false);
