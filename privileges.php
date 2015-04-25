@@ -1,10 +1,16 @@
 <?php
 require_once(dirname(__FILE__) . '/libs/Debugger/debugger.php');
-//MagentoDebugger::setDebuggerDir(dirname(__FILE__));
-MagentoDebugger::setDebuggerDir('/home/tereta/Work/Server/MagentoDebugger_2');
+MagentoDebugger::setDebuggerDir(dirname(__FILE__));
+$targetDir = '/home/tereta/Work/Server/MagentoDebugger_2';
+//$targetDir = MagentoDebugger::getDebuggerDir();
 
 require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
 
-$permissions = fileperms(MagentoDebugger::getDebuggerVarDir() . '/required.version');
-MagentoDebugger_Update::fixPermissions(MagentoDebugger::getDebuggerDir(), $permissions);
+$filePermissions = fileperms(MagentoDebugger::getDebuggerVarDir() . '/required.version');
+$dirPermissions = fileperms(MagentoDebugger::getDebuggerVarDir() . '/required.dir');
+var_dump($filePermissions);
+var_dump($dirPermissions);
+$owner = fileowner(MagentoDebugger::getDebuggerVarDir() . '/required.version');
+$fixed = MagentoDebugger_Update::fixPermissions($targetDir, $owner, $filePermissions, $dirPermissions);
+var_dump($fixed);
 ?>

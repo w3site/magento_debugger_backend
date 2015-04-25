@@ -1,4 +1,4 @@
-<?php 
+<?php
 abstract class MagentoDebugger_Update{
     const ERROR_PRIVILEGES = 1;
     const ERROR_VERSION_NOT_SPECIFIED = 2;
@@ -8,20 +8,43 @@ abstract class MagentoDebugger_Update{
     static protected $_excludeUpdateFiles = array('.gitignore', 'var', 'config', '.git', '.buildpath', '.project');
     static protected $_defaultDirectoryPermission = null;
     
-    public static function fixPermissions($dir, $privileges){
-        $dirResource=opendir($dir);
-        while($file=readdir($dirResource)){
-            if($file!="." && $file!=".."){
-    			if (is_dir($dir . "/" . $file)){
-    				chmod($dir . "/" . $file, $privileges);
-    				self::fixPermissions($dir . "/" . $file, $privileges);
-    			}
-    			else{
-    				chmod($dir . "/" . $file, $privileges);
-    			}
+    public static function fixPermissions($item, $owner, $filePrivileges, $dirPrivileges){
+    	if (is_dir($item)){
+    		if (!@chmod($item, $dirPrivileges)){
+    			return false;
     		}
     	}
+    	elseif(!@chmod($item, $filePrivileges)){
+    		return false;
+    	}
+    	
+    	if (!@chown($item, $owner)){
+    		return false;
+    	}
+    	
+    	if (!is_dir($item)){
+    		return true;
+    	}
+    	
+    	$dir = $item;
+    	
+        $dirResource=opendir($dir);
+        while($file=readdir($dirResource)){
+            if($file=="." || $file==".."){
+            	continue;
+    		}
+    		
+    		if (in_array($file, self::$_excludeUpdateFiles)){
+    			continue;
+    		}
+    		
+   			if (!self::fixPermissions($dir . "/" . $file, $owner, $filePrivileges, $dirPrivileges)){
+   				return false;
+   			}
+        }
     	closedir($dirResource);
+    	
+    	return true;
     }
     
     public static function verifyPermissions($dir){
