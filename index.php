@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.1.0'); /**
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.1.1'); /**
  *********************************************************************************
  *********************************************************************************
  * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
@@ -73,6 +73,11 @@ if (isset($_GET['magento_debug_info']) && isset($_GET['current_version'])){
     $currentVersion = MAGENTO_DEBUGGER_VERSION;
     
     if ($_GET['current_version'] != MAGENTO_DEBUGGER_VERSION){
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
+        if (MagentoDebugger_Update::verifyPermissions(MagentoDebugger::getDebuggerDir())){
+            return;
+        }
+       
         file_put_contents(MagentoDebugger::getDebuggerVarDir() . '/required.version', trim($_GET['current_version']));
     }
     
