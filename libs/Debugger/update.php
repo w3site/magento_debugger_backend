@@ -31,20 +31,20 @@ abstract class MagentoDebugger_Update{
         $dirResource=opendir($dir);
         while($file=readdir($dirResource)){
             if($file=="." || $file==".."){
-            	continue;
-    		}
-    		
-    		if (in_array($file, self::$_excludeUpdateFiles)){
-    			continue;
-    		}
-    		
-   			if (!self::fixPermissions($dir . "/" . $file, $owner, $filePrivileges, $dirPrivileges)){
-   				return false;
-   			}
+                continue;
+            }
+            
+            if (in_array($file, self::$_excludeUpdateFiles)){
+                continue;
+            }
+            
+            if (!self::fixPermissions($dir . "/" . $file, $owner, $filePrivileges, $dirPrivileges)){
+                return false;
+            }
         }
-    	closedir($dirResource);
-    	
-    	return true;
+        closedir($dirResource);
+        
+        return true;
     }
     
     public static function verifyPermissions($dir){
@@ -52,12 +52,12 @@ abstract class MagentoDebugger_Update{
         while($file=readdir($dirResource)){
             if($file=="." || $file==".."){
                 continue;
-    		}
-    		
-    		if (in_array($file, self::$_excludeUpdateFiles)){
-    			continue;
-    		}
-    		
+            }
+            
+            if (in_array($file, self::$_excludeUpdateFiles)){
+                continue;
+            }
+            
             if (!is_writable($dir . "/" . $file)){
                 return false;
             }
@@ -79,7 +79,7 @@ abstract class MagentoDebugger_Update{
         }
         
         $updatePath = MagentoDebugger::getDebuggerDir();
-        $updatePath = '/home/tereta/Work/Server/MagentoDebugger_2';
+        //$updatePath = '/home/tereta/Work/Server/MagentoDebugger_2';
         
         if (!self::verifyPermissions($updatePath)){
             throw new Exception("Wrong permitions for files to update", self::ERROR_PRIVILEGES);
