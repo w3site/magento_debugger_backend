@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.1.0'); /**
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.1.1'); /**
  *********************************************************************************
  *********************************************************************************
  * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
@@ -30,23 +30,6 @@ require_once('libs/Zend/Config/Ini.php');
 require_once(dirname(__FILE__) . '/libs/Debugger/debugger.php');
 MagentoDebugger::setDebuggerDir(dirname(__FILE__));
 
-// Updater
-if (defined('MAGENTO_DEBUGGER_UPDATE')){
-    require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
-    $arguments = $argv;
-    array_shift($arguments);
-    $version = null;
-    foreach($arguments as $item){
-        $itemArray = explode('=', $item);
-        if (isset($itemArray[0]) && $itemArray[0]=='--version' && isset($itemArray[1])){
-            $version = $itemArray[1];
-        }
-    }
-    
-    $updateData = MagentoDebugger_Update::run($version);
-    return;
-}
-
 $currentHost = MagentoDebugger::getProjectInfo();
 
 // Installation
@@ -72,21 +55,25 @@ if (isset($_GET['XDEBUG_SESSION_START']) || isset($_GET['XDEBUG_SESSION_STOP_NO_
 if (isset($_GET['magento_debug_info']) && isset($_GET['current_version'])){
     $currentVersion = MAGENTO_DEBUGGER_VERSION;
     
-    if ($_GET['current_version'] != MAGENTO_DEBUGGER_VERSION){
-        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
-        if (MagentoDebugger_Update::verifyPermissions(MagentoDebugger::getDebuggerDir())){
-            MagentoDebugger_Update::run($_GET['current_version']);
-            $debuggedInfo = new Varien_Object();
-            $debuggedInfo->setVersion($_GET['current_version']);
-            echo json_encode($debuggedInfo->getData());
-            return;
-        }
-       
-        file_put_contents(MagentoDebugger::getDebuggerVarDir() . '/required.version', trim($_GET['current_version']));
-    }
-    
     $debuggedInfo = new Varien_Object();
     $debuggedInfo->setVersion(MAGENTO_DEBUGGER_VERSION);
+    
+    if ($_GET['current_version'] != MAGENTO_DEBUGGER_VERSION){
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/update.php');
+        try{
+            MagentoDebugger_Update::run($_GET['current_version']);
+            $debuggedInfo->setUpdated(true);
+            $debuggedInfo->setVersion($_GET['current_version']);
+        }
+        catch(Exception $e){
+            file_put_contents(MagentoDebugger::getDebuggerVarDir() . '/required.version', trim($_GET['current_version']));
+            
+            $debuggedInfo->setUpdated(false);
+            $debuggedInfo->setErrorMessage($e->getMessage());
+            $debuggedInfo->setErrorCode($e->getCode());
+        }
+    }
+    
     echo json_encode($debuggedInfo->getData());
     return;
 }

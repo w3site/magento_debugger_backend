@@ -20,28 +20,38 @@ abstract class MagentoDebugger_Update{
         return true;
     }
     
-    public static function run($version = null){
-        if (!$version && is_file(MagentoDebugger::getDebuggerVarDir() . '/required.version')){
-            $version = file_get_contents(MagentoDebugger::getDebuggerVarDir() . '/required.version');
-        }
+    protected static $_messages = '';
+    public static $messagesStock = false;
+    
+    public static function message($message){
+        static::$_messages = static::$_messages . $message;
         
+        if (static::$messagesStock){
+            echo $message . "\n";
+        }
+    }
+    
+    public static function getMessages(){
+        return static::$_messages;
+    }
+    
+    const ERROR_PRIVILEGES = 1;
+    const ERROR_VERSION_NOT_SPECIFIED = 2;
+    const ERROR_CAN_NOT_DOWNLOAD = 3;
+    const ERROR_ZIP = 4;
+    
+    public static function run($version = null){
         if (!$version){
-            echo "Can not update version becouse version does not specified.\n";
-            echo "Please run open chrome extension on the project to define version of Magento Debugger Chrome extension.\n";
-            echo "Or specify the new version manualy usin command \"php update.php --version=[your version]\" (for example: \"php update.php --version=" . MAGENTO_DEBUGGER_VERSION . "\").\n";
-            return;
+            throw new Exception('Can not update version becouse version does not specified.', self::ERROR_VERSION_NOT_SPECIFIED);
         }
         
         $updatePath = MagentoDebugger::getDebuggerDir();
-        //$updatePath = '/home/tereta/Work/Server/MagentoDebugger_2';
+        $updatePath = '/home/tereta/Work/Server/MagentoDebugger_2';
         
         if (!self::verifyPermissions($updatePath)){
-            echo "Please use root account becouse for some files, the current user haven't permissions to write.\n";
-            echo "Updating failed.\n";
-            return;
+            throw new Exception("Wrong permitions for files to update", self::ERROR_PRIVILEGES);
         }
         
-        echo "Starting update from the version " . MAGENTO_DEBUGGER_VERSION . " to the version " . $version . "...\n";
         $updateDir = MagentoDebugger::getDebuggerVarDir() . '/update';
         if (is_dir($updateDir)){
             MagentoDebugger::removeDirectory($updateDir);
@@ -49,24 +59,18 @@ abstract class MagentoDebugger_Update{
         mkdir($updateDir);
         
         // Downloading
-        echo "Downloading update package...\n";
         $sourceUrl = 'https://github.com/w3site/magento_debugger_backend/archive/version-' . $version . '.zip';
         $saveFile = $updateDir . '/downloaded.zip';
         $copyed = @copy($sourceUrl, $saveFile);
         if (!$copyed){
-            echo "Error: " . error_get_last()['message'];
-            echo "Updating failed.\n";
-            return;
+            throw new Exception(error_get_last()['message'], self::ERROR_CAN_NOT_DOWNLOAD);
         }
         
         // Unzip
         if (!class_exists('ZipArchive')){
-            echo "Error: ZipArchive class does not found, please install and configure php to work with this extension class.\n";
-            echo "Updating failed.\n";
-            return;
+            throw new Exception('ZipArchive class does not found, please install and configure php to work with this extension class.', self::ERROR_ZIP);
         }
         
-        echo "Preparing package to update...\n";
         $zip = new ZipArchive;
         $res = $zip->open($saveFile);
         $zip->extractTo($updateDir);
@@ -85,9 +89,9 @@ abstract class MagentoDebugger_Update{
         }
         
         // Update
-        echo "Updating...\n";
         self::updateFiles($updateVersionDir, $updatePath, true);
-        echo "Update has been finished sucefully.\n";
+        
+        return true;
     }
     
     static protected $_excludeUpdateFiles = array('.gitignore', 'var', 'config', '.git', '.buildpath', '.project');
