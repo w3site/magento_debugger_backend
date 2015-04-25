@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.1.0'); /**
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.1.1'); /**
  *********************************************************************************
  *********************************************************************************
  * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
@@ -61,9 +61,13 @@ if (isset($_GET['magento_debug_info']) && isset($_GET['current_version'])){
             $debuggedInfo->setVersion($_GET['current_version']);
         }
         catch(Exception $e){
-            unlink(MagentoDebugger::getDebuggerVarDir() . '/required.version');
+            if (is_file(MagentoDebugger::getDebuggerVarDir() . '/required.version')){
+                unlink(MagentoDebugger::getDebuggerVarDir() . '/required.version');
+            }
             file_put_contents(MagentoDebugger::getDebuggerVarDir() . '/required.version', trim($_GET['current_version']));
-            rmdir(MagentoDebugger::getDebuggerVarDir() . '/required.dir');
+            if (is_dir(MagentoDebugger::getDebuggerVarDir() . '/required.dir')){
+                rmdir(MagentoDebugger::getDebuggerVarDir() . '/required.dir');
+            }
             mkdir(MagentoDebugger::getDebuggerVarDir() . '/required.dir');
             
             $debuggedInfo->setUpdated(false);
