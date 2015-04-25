@@ -22,11 +22,6 @@
  *********************************************************************************
  *********************************************************************************/
 
-require_once('libs/Zend/Exception.php');
-require_once('libs/Zend/Config/Exception.php');
-require_once('libs/Zend/Config.php');
-require_once('libs/Zend/Config/Ini.php');
-
 require_once(dirname(__FILE__) . '/libs/Debugger/debugger.php');
 MagentoDebugger::setDebuggerDir(dirname(__FILE__));
 
@@ -66,6 +61,7 @@ if (isset($_GET['magento_debug_info']) && isset($_GET['current_version'])){
             $debuggedInfo->setVersion($_GET['current_version']);
         }
         catch(Exception $e){
+            unlink(MagentoDebugger::getDebuggerVarDir() . '/required.version');
             file_put_contents(MagentoDebugger::getDebuggerVarDir() . '/required.version', trim($_GET['current_version']));
             
             $debuggedInfo->setUpdated(false);

@@ -49,6 +49,11 @@ abstract class MagentoDebugger{
             return self::$_projectInfo;
         }
         
+        require_once('libs/Zend/Exception.php');
+        require_once('libs/Zend/Config/Exception.php');
+        require_once('libs/Zend/Config.php');
+        require_once('libs/Zend/Config/Ini.php');
+        
         $currentHost = null;
         $currentHostName = $_SERVER['SERVER_NAME'];
         $dir = opendir('config');
