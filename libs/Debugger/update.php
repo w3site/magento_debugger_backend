@@ -50,15 +50,21 @@ abstract class MagentoDebugger_Update{
     public static function verifyPermissions($dir){
         $dirResource=opendir($dir);
         while($file=readdir($dirResource)){
-            if($file!="." && $file!=".."){
-                if (!is_writable($dir . "/" . $file)){
+            if($file=="." || $file==".."){
+                continue;
+    		}
+    		
+    		if (in_array($file, self::$_excludeUpdateFiles)){
+    			continue;
+    		}
+    		
+            if (!is_writable($dir . "/" . $file)){
+                return false;
+            }
+            
+            if (is_dir($dir . "/" . $file)){
+                if (!self::verifyPermissions($dir . "/" . $file)){
                     return false;
-                }
-                
-                if (is_dir($dir . "/" . $file)){
-                    if (!self::verifyPermissions($dir . "/" . $file)){
-                        return false;
-                    }
                 }
             }
         }
