@@ -15,30 +15,60 @@ abstract class MagentoDebugger_Mails{
             case("getdata"):
                 self::getData();
                 break;
+            case("removedata"):
+                self::removeData();
+                break;
+        }
+    }
+    
+    public static function removeData(){
+        $serverKey = MagentoDebugger::getKeyFromString($_SERVER['SERVER_NAME']);
+        $profileKey = isset($_GET['magento_debug_profiler_key']) ? $_GET['magento_debug_profiler_key'] : '';
+        $profilerDir = MagentoDebugger::getDebuggerVarDir() . '/profiler';
+        
+        if ($profileKey == 'whole'){
+            $dirResource = opendir($profilerDir);
+            while($file = readdir($dirResource)){
+                if ($file != '.' && $file != '..'){
+                    unlink($profilerDir . '/' . $file);
+                }
+            }
+            
+            return;
+        }
+        
+        $headerFile = $profilerDir . '/' . $serverKey . '.' . $profileKey . '.jshe';
+        $profilerFile = $profilerDir . '/' . $serverKey . '.' . $profileKey . '.jsar';
+        if (is_file($headerFile)){
+            unlink($headerFile);
+        }
+        
+        if (is_file($profilerFile)){
+            unlink($profilerFile);
         }
     }
     
     public static function getData(){
-         $serverKey = MagentoDebugger::getKeyFromString($_SERVER['SERVER_NAME']);
-         $profileKey = isset($_GET['magento_debug_profiler_key']) ? $_GET['magento_debug_profiler_key'] : '';
-         $profilerDir = MagentoDebugger::getDebuggerVarDir() . '/profiler';
-         $data = array();
-         
-         $profilerFile = $profilerDir . '/' . $serverKey . '.' . $profileKey . '.jsar';
-         
-         if (!is_file($profilerFile)){
-             return;
-         }
-         
-         $dataJsonArray = file_get_contents($profilerFile);
-         $dataJsonExploded = explode("\n", $dataJsonArray);
-         array_pop($dataJsonExploded);
-         
-         foreach($dataJsonExploded as $item){
-             array_push($data, json_decode(($item)));
-         }
-         
-         echo json_encode($data);
+        $serverKey = MagentoDebugger::getKeyFromString($_SERVER['SERVER_NAME']);
+        $profileKey = isset($_GET['magento_debug_profiler_key']) ? $_GET['magento_debug_profiler_key'] : '';
+        $profilerDir = MagentoDebugger::getDebuggerVarDir() . '/profiler';
+        $data = array();
+        
+        $profilerFile = $profilerDir . '/' . $serverKey . '.' . $profileKey . '.jsar';
+        
+        if (!is_file($profilerFile)){
+            return;
+        }
+        
+        $dataJsonArray = file_get_contents($profilerFile);
+        $dataJsonExploded = explode("\n", $dataJsonArray);
+        array_pop($dataJsonExploded);
+        
+        foreach($dataJsonExploded as $item){
+            array_push($data, json_decode(($item)));
+        }
+        
+        echo json_encode($data);
     }
     
     public static function getList(){

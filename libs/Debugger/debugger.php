@@ -49,22 +49,22 @@ abstract class MagentoDebugger{
             return self::$_projectInfo;
         }
         
-        require_once('libs/Zend/Exception.php');
-        require_once('libs/Zend/Config/Exception.php');
-        require_once('libs/Zend/Config.php');
-        require_once('libs/Zend/Config/Ini.php');
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Zend/Exception.php');
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Zend/Config/Exception.php');
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Zend/Config.php');
+        require_once(MagentoDebugger::getDebuggerDir() . '/libs/Zend/Config/Ini.php');
         
         $currentHost = null;
         $currentHostName = $_SERVER['SERVER_NAME'];
-        $dir = opendir('config');
+        $dir = opendir(self::getDebuggerDir() . '/config');
         while($file = readdir($dir)){
-            if (!is_file('config/' . $file)) continue;
+            if (!is_file(self::getDebuggerDir() . '/config/' . $file)) continue;
             $fileInfo = pathinfo($file);
             if (!isset($fileInfo['extension']) || $fileInfo['extension']!='ini'){
                 continue;
             }
             
-            $config = new Zend_Config_Ini('config/' . $file, 'config');
+            $config = new Zend_Config_Ini(self::getDebuggerDir() . '/config/' . $file, 'config');
             if ($config->name == $currentHostName){
                 $currentHost = $config->toArray();
                 $currentHost['identifier'] = $fileInfo['filename'];
