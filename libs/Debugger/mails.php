@@ -19,7 +19,7 @@ abstract class MagentoDebugger_Mails{
     }
     
     public static function clearList(){
-        $mailDir = Mage::getBaseDir('var') . '/mails';
+        $mailDir = MagentoDebugger::getDebuggerVarDir() . '/mails';
         $dir = opendir($mailDir);
         while($file = readdir($dir)){
             if (is_file($mailDir . '/' . $file)){
