@@ -97,7 +97,7 @@ class Varien_Profiler
         //if ($timerName == 'CONFIGURABLE:Mage_Catalog_Model_Product_Type_Configurable::getUsedProducts'){
         //	file_put_contents('var/debug/prof', Varien_Debug::backtrace(true) . "\n", FILE_APPEND);
         //}
-        file_put_contents('var/debug/profiling.log', $timerName . " (s)\n", FILE_APPEND);
+        //file_put_contents('var/debug/profiling.log', $timerName . " (s)\n", FILE_APPEND);
         self::resume($timerName);
     }
 
