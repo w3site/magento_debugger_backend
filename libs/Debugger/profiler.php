@@ -6,7 +6,7 @@
  * @author Tereta Alexander (www.w3site.org)
  */
 
-abstract class MagentoDebugger_Mails{
+abstract class MagentoDebugger_Profiler{
     public static function init(){
         switch ($_GET['magento_debug_action']){
             case("getlist"):
@@ -88,6 +88,9 @@ abstract class MagentoDebugger_Mails{
             }
             
             $headerJson = file_get_contents($profilerDir . '/' . $item);
+            if (!$headerJson){
+                continue;
+            }
             $header = json_decode(trim($headerJson));
             $time = $header->time;
             $header->time = @date('Y.m.d H:i:s', $time);
@@ -98,5 +101,4 @@ abstract class MagentoDebugger_Mails{
     }
 }
 
-//MagentoDebugger::iniMage();
-MagentoDebugger_Mails::init();
+MagentoDebugger_Profiler::init();

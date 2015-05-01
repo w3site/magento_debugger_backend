@@ -94,6 +94,10 @@ class Varien_Profiler
 
     public static function start($timerName)
     {
+        //if ($timerName == 'CONFIGURABLE:Mage_Catalog_Model_Product_Type_Configurable::getUsedProducts'){
+        //	file_put_contents('var/debug/prof', Varien_Debug::backtrace(true) . "\n", FILE_APPEND);
+        //}
+        file_put_contents('var/debug/profiling.log', $timerName . " (s)\n", FILE_APPEND);
         self::resume($timerName);
     }
 
@@ -121,6 +125,7 @@ class Varien_Profiler
                     json_encode(self::$_timers[$timerName])
                     );
             
+            file_put_contents('var/debug/profiling.log', $timerName . " (f - " . self::$_timers[$timerName]['sum'] . "s)\n", FILE_APPEND);
             file_put_contents(self::$_jsonLog . '.jsar', $base64 . "\n", FILE_APPEND);
         }
     }
