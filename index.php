@@ -27,6 +27,20 @@ MagentoDebugger::setDebuggerDir(dirname(__FILE__));
 
 $currentHost = MagentoDebugger::getProjectInfo();
 
+// Files
+if (isset($_GET['magento_debug']) && $_GET['magento_debug'] == 'file' && isset($_GET['magento_debug_file'])){
+    $dir = MagentoDebugger::getDebuggerDir() . '/files/';
+    $file = realpath($dir . $_GET['magento_debug_file']);
+    
+    if ($file && substr($file, 0, strlen($dir)) == $dir){
+        echo file_get_contents($file);
+    }
+    else{
+        header("HTTP/1.0 404 Not Found");
+        echo "Error 404.";
+    }
+}
+
 // Installation
 if (!$currentHost || (isset($_GET['magento_debug']) && $_GET['magento_debug'] == 'configure')){
     require_once(MagentoDebugger::getDebuggerDir() . '/libs/Debugger/installation.php');
@@ -135,18 +149,6 @@ if (isset($_GET['magento_debug'])){
         $file = MagentoDebugger::getDebuggerVarDir() . '/ajax-console.log';
         file_put_contents($file, $_POST['message'] . "\n", FILE_APPEND);
         return;
-    }
-    if ($_GET['magento_debug'] == 'file' && isset($_GET['magento_debug_file'])){
-        $dir = MagentoDebugger::getDebuggerDir() . '/files/';
-        $file = realpath($dir . $_GET['magento_debug_file']);
-        
-        if ($file && substr($file, 0, strlen($dir)) == $dir){
-            echo file_get_contents($file);
-        }
-        else{
-            header("HTTP/1.0 404 Not Found");
-            echo "Error 404.";
-        }
     }
     
     if ($_GET['magento_debug'] == 'model' && isset($_GET['magento_debug_model_method'])){
