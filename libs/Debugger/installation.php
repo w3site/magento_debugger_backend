@@ -68,7 +68,7 @@ class MagentoDebugger_Installation{
         }
         
         if (isset($_POST['project_directory'])){
-            $projectDirectory = $this->_postProjectDirectory = $this->_stripData($_POST['project_directory']);
+            $projectDirectory = $this->_postProjectDirectory = $this->_stripData(MagentoDebugger::getPath($_POST['project_directory']));
         }
         
         if (!$this->verifyMagentoDirectory($projectDirectory)){
@@ -84,12 +84,13 @@ class MagentoDebugger_Installation{
         $varDir = MagentoDebugger::getDebuggerDir() . '/var';
         
         $allowed = true;
-        if (!is_writable($varDir)){
+        
+        if (!MagentoDebugger::isWritable($varDir)){
             array_push($this->_errors, 'Please make "var" dir at the Magento Debugger and all files on it writable ("' . $varDir . '").');
             $allowed = false;
         }
         
-        if (!is_writable($configDir)){
+        if (!MagentoDebugger::isWritable($configDir)){
             array_push($this->_errors, 'Please make "config" dir at the Magento Debugger and all files on it writable ("' . $configDir . '").');
             $allowed = false;
         }

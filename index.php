@@ -32,6 +32,9 @@ if (isset($_GET['magento_debug']) && $_GET['magento_debug'] == 'file' && isset($
     $dir = MagentoDebugger::getDebuggerDir() . '/files/';
     $file = realpath($dir . $_GET['magento_debug_file']);
     
+    $file = MagentoDebugger::getPath($file);
+    $dir = MagentoDebugger::getPath($dir);
+    
     if ($file && substr($file, 0, strlen($dir)) == $dir){
         echo file_get_contents($file);
     }
@@ -39,6 +42,8 @@ if (isset($_GET['magento_debug']) && $_GET['magento_debug'] == 'file' && isset($
         header("HTTP/1.0 404 Not Found");
         echo "Error 404.";
     }
+    
+    return;
 }
 
 // Installation

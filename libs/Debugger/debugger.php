@@ -6,7 +6,27 @@ abstract class MagentoDebugger{
         echo $data . "\n";
     }
     
+    public static function getPath($item){
+        $item = str_replace('\\', '/', $item);
+        return $item;
+    }
+    
+    
+    public static function isWritable($item){
+        if (!is_dir($item)){
+            return is_writable($item);
+        }
+        
+        if (file_put_contents($item . '/temp.tmp', 'tmp')){
+            unlink($item . '/temp.tmp');
+            return true;
+        }
+        
+        return false;
+    }
+    
     public static function setDebuggerDir($dir){
+        $dir = self::getPath($dir);
         self::$_configurations['debugger_dir'] = $dir;
     }
     
