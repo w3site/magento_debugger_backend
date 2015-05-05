@@ -50,14 +50,48 @@ abstract class MagentoDebugger{
     
     protected static $_profilerEnabled = false;
     
+    protected static $_uniqId = null;
+    protected static $_jsonLog = null;
+    
     public static function enableProfiler($status = true){
         self::$_profilerEnabled = $status;
         if (!$status){
             return;
         }
         
-        require_once(self::getDebuggerDir() . '/libs/Varien/Profiler.php');
+        require_once(MagentoDebugger::getProjectDir() . 'lib/Varien/Profiler.php');
+        //require_once(self::getDebuggerDir() . '/libs/Varien/Profiler.php');
         Varien_Profiler::enable();
+        
+        $serverKey = MagentoDebugger::getKeyFromString(isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'console');
+        $time = time();
+        self::$_uniqId = $time . '_' . uniqid();
+        self::$_jsonLog = MagentoDebugger::getDebuggerVarDir() . '/profiler/' . $serverKey . '.' . self::$_uniqId;
+        $url = (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'Not specified');
+        
+        $profilerHeader = array(
+            'time' => $time,
+            'url'  => $url,
+            'key'  => self::$_uniqId
+        );
+        
+        file_put_contents(self::$_jsonLog . '.jshe', json_encode($profilerHeader));
+    }
+    
+    public static function saveProfiler(){
+        if (!self::$_profilerEnabled){
+            return;
+        }
+        
+        $timers = Varien_Profiler::getTimers();
+        foreach($timers as $timerName => $timer){
+            $timer['name'] = $timerName;
+            $base64 = (
+                json_encode($timer)
+            );
+            
+            file_put_contents(self::$_jsonLog . '.jsar', $base64 . "\n", FILE_APPEND);
+        }
     }
     
     public static function getKeyFromString($string){

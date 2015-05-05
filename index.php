@@ -146,10 +146,6 @@ if (isset($_COOKIE['magento_debug_blocks']) && $_COOKIE['magento_debug_blocks'] 
 }
 
 if (isset($_GET['magento_debug'])){
-    if ($_GET['magento_debug'] == 'redirect'){
-        header('Location: /pushchairs/buggies-strollers/chicco-liteway-stroller-topazio.html');
-        return;
-    }
     if ($_GET['magento_debug'] == 'message' && isset($_POST['message'])){
         $file = MagentoDebugger::getDebuggerVarDir() . '/ajax-console.log';
         file_put_contents($file, $_POST['message'] . "\n", FILE_APPEND);
@@ -187,4 +183,5 @@ chdir(MagentoDebugger::getProjectDir());
 require_once('index.php');
 
 MagentoDebugger::saveConfiguration();
+MagentoDebugger::saveProfiler();
 ?>
