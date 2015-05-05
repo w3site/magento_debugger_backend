@@ -125,7 +125,7 @@ class Varien_Profiler
                     json_encode(self::$_timers[$timerName])
                     );
             
-            file_put_contents('var/debug/profiling.log', $timerName . " (f - " . self::$_timers[$timerName]['sum'] . "s)\n", FILE_APPEND);
+            //file_put_contents('var/debug/profiling.log', $timerName . " (f - " . self::$_timers[$timerName]['sum'] . "s)\n", FILE_APPEND);
             file_put_contents(self::$_jsonLog . '.jsar', $base64 . "\n", FILE_APPEND);
         }
     }
