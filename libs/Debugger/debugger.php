@@ -59,7 +59,7 @@ abstract class MagentoDebugger{
             return;
         }
         
-        require_once(MagentoDebugger::getProjectDir() . 'lib/Varien/Profiler.php');
+        require_once(MagentoDebugger::getProjectDir() . '/lib/Varien/Profiler.php');
         //require_once(self::getDebuggerDir() . '/libs/Varien/Profiler.php');
         Varien_Profiler::enable();
         

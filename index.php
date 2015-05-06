@@ -179,6 +179,9 @@ if (isset($_COOKIE['magento_debug_profiler']) && $_COOKIE['magento_debug_profile
     MagentoDebugger::enableProfiler();
 }
 
+//$_SERVER['MAGE_IS_DEVELOPER_MODE'] = true;
+//ini_set('display_errors', 1);
+
 chdir(MagentoDebugger::getProjectDir());
 require_once('index.php');
 
