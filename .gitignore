@@ -1,6 +1,9 @@
-/config/*
-/var/*
-!/config/empty
-!/var/empty
 /.buildpath
 /.project
+
+/var/*
+!/var/empty
+/config/*
+!/config/empty
+/includes/*
+!/includes/empty

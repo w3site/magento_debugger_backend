@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.2.3'); /**
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.2.4'); /**
  *********************************************************************************
  *********************************************************************************
  * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
@@ -26,6 +26,20 @@ require_once(dirname(__FILE__) . '/libs/Debugger/debugger.php');
 MagentoDebugger::setDebuggerDir(dirname(__FILE__));
 
 $currentHost = MagentoDebugger::getProjectInfo();
+
+// Include external code
+$dirResource = opendir(MagentoDebugger::getDebuggerDir() . '/includes');
+while($item = readdir($dirResource)){
+    if ($item == '.' || $dirResource == '..'){
+        continue;
+    }
+    
+    if ($item == 'empty' || !is_file(MagentoDebugger::getDebuggerDir() . '/includes/' . $item)){
+        continue;
+    }
+    
+    require_once(MagentoDebugger::getDebuggerDir() . '/includes/' . $item);
+}
 
 // Files
 if (isset($_GET['magento_debug']) && $_GET['magento_debug'] == 'file' && isset($_GET['magento_debug_file'])){
