@@ -32,6 +32,10 @@ abstract class MagentoDebugger_Mails{
         $serverKey = MagentoDebugger::getKeyFromString($_SERVER['SERVER_NAME']);
         
         $mailDir = MagentoDebugger::getDebuggerVarDir() . '/mails';
+        if (!is_dir($mailDir)){
+            mkdir($mailDir);
+        }
+        
         $dir = opendir($mailDir);
         $files = array();
         while($item = readdir($dir)){

@@ -65,9 +65,15 @@ abstract class MagentoDebugger{
         
         $serverKey = MagentoDebugger::getKeyFromString(isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'console');
         $time = time();
+        $directory = MagentoDebugger::getDebuggerVarDir() . '/profiler/';
+        
         self::$_uniqId = $time . '_' . uniqid();
-        self::$_jsonLog = MagentoDebugger::getDebuggerVarDir() . '/profiler/' . $serverKey . '.' . self::$_uniqId;
+        self::$_jsonLog = $directory . $serverKey . '.' . self::$_uniqId;
         $url = (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'Not specified');
+        
+        if (!is_dir($directory)){
+            mkdir($directory);
+        }
         
         $profilerHeader = array(
             'time' => $time,
