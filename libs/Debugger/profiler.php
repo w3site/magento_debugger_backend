@@ -8,6 +8,11 @@
 
 abstract class MagentoDebugger_Profiler{
     public static function init(){
+        $profilerDir = MagentoDebugger::getDebuggerVarDir() . '/profiler';
+        if (!is_dir($profilerDir)){
+            mkdir($profilerDir);
+        }
+        
         switch ($_GET['magento_debug_action']){
             case("getlist"):
                 self::getList();
@@ -75,6 +80,7 @@ abstract class MagentoDebugger_Profiler{
         $serverKey = MagentoDebugger::getKeyFromString($_SERVER['SERVER_NAME']);
         
         $profilerDir = MagentoDebugger::getDebuggerVarDir() . '/profiler';
+        
         $dir = opendir($profilerDir);
         $files = array();
         while($item = readdir($dir)){
