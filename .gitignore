@@ -7,3 +7,5 @@
 !/config/empty
 /includes/*
 !/includes/empty
+/nbproject/private/
+nbproject/

@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.2.5'); /**
+ * Magento Debugger version is */ define('MAGENTO_DEBUGGER_VERSION', '0.2.7'); /**
  *********************************************************************************
  *********************************************************************************
  * © Tereta Alexander (www.w3site.org), 2014-2015yy.                             *
@@ -21,6 +21,8 @@
  *********************************************************************************
  *********************************************************************************
  *********************************************************************************/
+
+$includedFile = (__FILE__ != $_SERVER['SCRIPT_FILENAME']);
 
 require_once(dirname(__FILE__) . '/libs/Debugger/debugger.php');
 MagentoDebugger::setDebuggerDir(dirname(__FILE__));
@@ -197,8 +199,11 @@ if (isset($_COOKIE['magento_debug_profiler']) && $_COOKIE['magento_debug_profile
 //ini_set('display_errors', 1);
 
 chdir(MagentoDebugger::getProjectDir());
-require_once('index.php');
+
+require('index.php');
 
 MagentoDebugger::saveConfiguration();
 MagentoDebugger::saveProfiler();
+
+return;
 ?>
